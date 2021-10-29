@@ -1,32 +1,40 @@
-import React, { ChangeEvent, useState } from "react";
+import React, { ChangeEvent, useEffect, useState } from "react";
 import { TaskProps } from "../interface/index";
 
 interface formPros {
   addTask: (task: TaskProps) => void;
+  singleTask: TaskProps;
+  updateTask: (task: TaskProps) => void;
 }
 
 const initialValue = {
-  id: 0,
   title: "",
   description: "",
 };
 
-const FormTask = ({ addTask }: formPros) => {
-  const [task, setTask] = useState(initialValue);
+const FormTask = ({ addTask, singleTask, updateTask  }: formPros) => {
+  const [task, setTask] = useState<TaskProps>(initialValue);
+
+  useEffect(() => {
+    if(singleTask.id) {
+      setTask(singleTask);
+    }
+  }, [singleTask])
 
   const handleChange = (e: ChangeEvent<HTMLInputElement> | ChangeEvent<HTMLTextAreaElement> ) => {
     setTask({
-      ...task,
-      id: Date.now(),
+      ...task, 
       [e.target.name]: e.target.value,
     });
   };
-
+  
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-    
     e.preventDefault();
-    
-    addTask(task);
+    if(singleTask.id) {
+      updateTask(task);
+    }else {
+      addTask(task);
+    }
     setTask(initialValue);
   };
 
